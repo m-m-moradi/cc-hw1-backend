@@ -1,16 +1,16 @@
 from rest_framework import serializers
 from generic_relations.relations import GenericRelatedField
-from .models import *
+from bulletin import models
 
 
 class CommentDetailSerializer(serializers.ModelSerializer):
     content_object = GenericRelatedField({
-        Picture: serializers.PrimaryKeyRelatedField(queryset=Picture.objects.all()),
-        Story: serializers.PrimaryKeyRelatedField(queryset=Story.objects.all()),
-    })
+        models.Picture: serializers.PrimaryKeyRelatedField(queryset=models.Picture.objects.all()),
+        models.Story: serializers.PrimaryKeyRelatedField(queryset=models.Story.objects.all()),
+    }, read_only=True)
 
     class Meta:
-        model = Picture
+        model = models.Comment
         fields = '__all__'
         read_only_fields = [
             'created_at',
@@ -23,10 +23,11 @@ class PictureListSerializer(serializers.ModelSerializer):
     comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
-        model = Picture
+        model = models.Picture
         fields = [
             'id',
             'image',
+            'comments',
             'created_at',
             'updated_at'
         ]
@@ -36,10 +37,11 @@ class PictureDetailSerializer(serializers.ModelSerializer):
     comments = CommentDetailSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Picture
+        model = models.Picture
         fields = [
             'id',
             'image',
+            'comments',
         ]
         read_only_fields = [
             'created_at',
@@ -51,10 +53,11 @@ class StoryListSerializer(serializers.ModelSerializer):
     comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
-        model = Story
+        model = models.Story
         fields = [
             'id',
             'file',
+            'comments',
             'created_at',
             'updated_at'
         ]
@@ -64,10 +67,11 @@ class StoryDetailSerializer(serializers.ModelSerializer):
     comments = CommentDetailSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Story
+        model = models.Story
         fields = [
             'id',
             'file',
+            'comments',
         ]
         read_only_fields = [
             'created_at',
