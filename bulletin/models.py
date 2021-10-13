@@ -8,11 +8,11 @@ from django.contrib.contenttypes.fields import GenericRelation
 
 
 def picture_location(instance, filename, **kwargs):
-    return f'pictures/{instance.id}/image-{uuid4()}.{filename.split("/")[-1]}'
+    return f'pictures/image-{uuid4()}_{filename.split("/")[-1]}'
 
 
 def story_location(instance, filename, **kwargs):
-    return f'stories/{instance.id}/story-{uuid4()}.{filename.split("/")[-1]}'
+    return f'stories/story-{uuid4()}_{filename.split("/")[-1]}'
 
 
 class CommonInfo(models.Model):
@@ -39,7 +39,7 @@ class Comment(CommonInfo):
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey()
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     def __str__(self):
         return self.content
@@ -50,14 +50,18 @@ class Comment(CommonInfo):
 
 class Picture(CommonInfo):
     image = models.ImageField(_('main picture'), upload_to=picture_location, null=False)
-    comments = GenericRelation(Comment)
+    comments = GenericRelation(Comment, content_type_field='content_type', object_id_field='object_id')
+
+    def __str__(self):
+        return self.image.name.split('/')[-1]
 
 
 class Story(CommonInfo):
     file = models.FileField(_('story file'), upload_to=story_location, null=False)
-    comments = GenericRelation(Comment)
+    comments = GenericRelation(Comment, content_type_field='content_type', object_id_field='object_id')
+
+    def __str__(self):
+        return self.file.name.split('/')[-1]
 
     class Meta:
         verbose_name_plural = "stories"
-
-
