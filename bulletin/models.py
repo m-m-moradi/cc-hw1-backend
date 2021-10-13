@@ -34,7 +34,7 @@ class Comment(CommonInfo):
     ]
     author = models.CharField(max_length=255, null=False, blank=False)
     content = models.TextField()
-    date_posted = models.DateTimeField(default=now, null=True)
+    posted_at = models.DateTimeField(default=now, null=True)
     published_status = models.CharField(max_length=2, choices=PUB_STATUS, null=False, default=PENDING)
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)

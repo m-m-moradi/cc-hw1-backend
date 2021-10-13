@@ -14,7 +14,9 @@ django==3.2.8
 django-filter==21.1
     # via -r requirements.in
 djangorestframework==3.12.4
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   rest-framework-generic-relations
 importlib-metadata==4.8.1
     # via markdown
 markdown==3.3.4
@@ -25,6 +27,8 @@ psycopg2==2.9.1
     # via -r requirements.in
 pytz==2021.3
     # via django
+rest-framework-generic-relations==2.1.0
+    # via -r requirements.in
 sqlparse==0.4.2
     # via django
 typing-extensions==3.10.0.2
