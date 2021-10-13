@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bulletin'
 ]
 
 MIDDLEWARE = [
@@ -106,6 +107,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+TEMP_ROOT = MEDIA_ROOT / 'tmp'
+
+if not os.path.exists(TEMP_ROOT):
+    os.makedirs(TEMP_ROOT)
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
