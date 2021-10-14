@@ -5,3 +5,5 @@ django-filter
 psycopg2
 Pillow
 rest-framework-generic-relations
+Faker
+requests
