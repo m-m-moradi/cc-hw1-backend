@@ -50,6 +50,8 @@ class Comment(CommonInfo):
 
 class Picture(CommonInfo):
     image = models.ImageField(_('main picture'), upload_to=picture_location, null=False)
+    title = models.CharField(max_length=500, null=False, blank=False)
+    uploader = models.CharField(max_length=255, null=False, blank=False)
     comments = GenericRelation(Comment, content_type_field='content_type', object_id_field='object_id')
 
     def __str__(self):
@@ -57,11 +59,13 @@ class Picture(CommonInfo):
 
 
 class Story(CommonInfo):
-    file = models.FileField(_('story file'), upload_to=story_location, null=False)
+    text = models.TextField(null=False, blank=False)
+    title = models.CharField(max_length=500, null=False, blank=False)
+    author = models.CharField(max_length=255, null=False, blank=False)
     comments = GenericRelation(Comment, content_type_field='content_type', object_id_field='object_id')
 
     def __str__(self):
-        return self.file.name.split('/')[-1]
+        return f'{self.author}:{self.title}'
 
     class Meta:
         verbose_name_plural = "stories"

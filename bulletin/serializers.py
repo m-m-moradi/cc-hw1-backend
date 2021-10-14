@@ -24,13 +24,7 @@ class PictureListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Picture
-        fields = [
-            'id',
-            'image',
-            'comments',
-            'created_at',
-            'updated_at'
-        ]
+        fields = '__all__'
 
 
 class PictureDetailSerializer(serializers.ModelSerializer):
@@ -38,11 +32,7 @@ class PictureDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Picture
-        fields = [
-            'id',
-            'image',
-            'comments',
-        ]
+        fields = '__all__'
         read_only_fields = [
             'created_at',
             'updated_at'
@@ -54,13 +44,7 @@ class StoryListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Story
-        fields = [
-            'id',
-            'file',
-            'comments',
-            'created_at',
-            'updated_at'
-        ]
+        fields = '__all__'
 
 
 class StoryDetailSerializer(serializers.ModelSerializer):
@@ -68,11 +52,7 @@ class StoryDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Story
-        fields = [
-            'id',
-            'file',
-            'comments',
-        ]
+        fields = '__all__'
         read_only_fields = [
             'created_at',
             'updated_at'
