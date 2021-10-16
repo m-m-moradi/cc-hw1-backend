@@ -19,16 +19,22 @@ class CommentDetailSerializer(serializers.ModelSerializer):
         ]
 
 
+# noinspection PyMethodMayBeStatic
 class PictureListSerializer(serializers.ModelSerializer):
-    comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    comments = serializers.SerializerMethodField('get_comments')
 
     class Meta:
         model = models.Picture
         fields = '__all__'
 
+    def get_comments(self, picture):
+        items = models.Comment.objects.filter(picture=picture, published_status=models.ACCEPTED)
+        return [obj.id for obj in items]
 
+
+# noinspection PyMethodMayBeStatic
 class PictureDetailSerializer(serializers.ModelSerializer):
-    comments = CommentDetailSerializer(many=True, read_only=True)
+    comments = serializers.SerializerMethodField('get_comments')
 
     class Meta:
         model = models.Picture
@@ -38,17 +44,29 @@ class PictureDetailSerializer(serializers.ModelSerializer):
             'updated_at'
         ]
 
+    def get_comments(self, picture):
+        items = models.Comment.objects.filter(picture=picture, published_status=models.ACCEPTED)
+        serializer = CommentDetailSerializer(instance=items, many=True)
+        return serializer.data
 
+
+# noinspection PyMethodMayBeStatic
 class StoryListSerializer(serializers.ModelSerializer):
-    comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    comments = serializers.SerializerMethodField('get_comments')
 
     class Meta:
         model = models.Story
         fields = '__all__'
 
+    def get_comments(self, story):
+        items = models.Comment.objects.filter(story=story, published_status=models.ACCEPTED)
+        return [obj.id for obj in items]
 
+
+# noinspection PyMethodMayBeStatic
 class StoryDetailSerializer(serializers.ModelSerializer):
-    comments = CommentDetailSerializer(many=True, read_only=True)
+    # comments = CommentDetailSerializer(many=True, read_only=True, source='get_accepted_comments')
+    comments = serializers.SerializerMethodField('get_comments')
 
     class Meta:
         model = models.Story
@@ -57,3 +75,8 @@ class StoryDetailSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at'
         ]
+
+    def get_comments(self, story):
+        items = models.Comment.objects.filter(story=story, published_status=models.ACCEPTED)
+        serializer = CommentDetailSerializer(instance=items, many=True)
+        return serializer.data

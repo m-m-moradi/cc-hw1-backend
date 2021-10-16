@@ -13,8 +13,11 @@ charset-normalizer==2.0.7
 django==3.2.8
     # via
     #   -r requirements.in
+    #   django-cors-headers
     #   django-filter
     #   djangorestframework
+django-cors-headers==3.10.0
+    # via -r requirements.in
 django-filter==21.1
     # via -r requirements.in
 djangorestframework==3.12.4

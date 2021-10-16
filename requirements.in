@@ -7,3 +7,4 @@ Pillow
 rest-framework-generic-relations
 Faker
 requests
+django-cors-headers

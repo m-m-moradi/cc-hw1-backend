@@ -43,12 +43,15 @@ class Comment(CommonInfo):
     class Meta:
         verbose_name_plural = "comments"
 
+    def get_accepted_comments(self):
+        return self.objects.filter(published_status=ACCEPTED)
+
 
 class Picture(CommonInfo):
     uploader = models.CharField(max_length=255, null=False, blank=False)
     title = models.CharField(max_length=500, null=False, blank=False)
     image = models.ImageField(_('main picture'), upload_to=picture_location, null=False)
-    comments = GenericRelation(Comment, content_type_field='content_type', object_id_field='object_id')
+    comments = GenericRelation(Comment, content_type_field='content_type', object_id_field='object_id', related_query_name='picture')
 
     def __str__(self):
         return self.image.name.split('/')[-1]
@@ -58,7 +61,7 @@ class Story(CommonInfo):
     author = models.CharField(max_length=255, null=False, blank=False)
     title = models.CharField(max_length=500, null=False, blank=False)
     text = models.TextField(null=False, blank=False)
-    comments = GenericRelation(Comment, content_type_field='content_type', object_id_field='object_id')
+    comments = GenericRelation(Comment, content_type_field='content_type', object_id_field='object_id', related_query_name='story')
 
     def __str__(self):
         return f'{self.author}:{self.title}'
