@@ -8,3 +8,4 @@ rest-framework-generic-relations
 Faker
 requests
 django-cors-headers
+ibm-watson>=5.3.0

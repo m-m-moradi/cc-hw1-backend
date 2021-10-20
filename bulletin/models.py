@@ -20,6 +20,10 @@ def picture_location(instance, filename, **kwargs):
     return f'pictures/image-{uuid4()}_{filename.split("/")[-1]}'
 
 
+def audio_location(instance, filename, **kwargs):
+    return f'audios/audio-{uuid4()}_{filename.split("/")[-1]}'
+
+
 class CommonInfo(models.Model):
     created_at = models.DateTimeField(_('created_at'), default=now)
     updated_at = models.DateTimeField(_('updated_at'), auto_now=True)
@@ -33,6 +37,8 @@ class CommonInfo(models.Model):
 class Comment(CommonInfo):
     author = models.CharField(max_length=255, null=False, blank=False)
     text = models.TextField()
+    audio = models.FileField(upload_to=audio_location, null=True, default=None)
+    sentiment = models.JSONField(default=dict)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
@@ -61,7 +67,9 @@ class Story(CommonInfo):
     author = models.CharField(max_length=255, null=False, blank=False)
     title = models.CharField(max_length=500, null=False, blank=False)
     text = models.TextField(null=False, blank=False)
+    sentiment = models.JSONField(default=dict)
     comments = GenericRelation(Comment, content_type_field='content_type', object_id_field='object_id', related_query_name='story')
+    audio = models.FileField(upload_to=audio_location, null=True, default=None)
 
     def __str__(self):
         return f'{self.author}:{self.title}'

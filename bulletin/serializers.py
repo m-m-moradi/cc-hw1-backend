@@ -13,6 +13,8 @@ class CommentDetailSerializer(serializers.ModelSerializer):
         model = models.Comment
         fields = '__all__'
         read_only_fields = [
+            'sentiment',
+            'audio',
             'created_at',
             'updated_at',
             'posted_at',
@@ -72,6 +74,8 @@ class StoryDetailSerializer(serializers.ModelSerializer):
         model = models.Story
         fields = '__all__'
         read_only_fields = [
+            'sentiment',
+            'audio',
             'created_at',
             'updated_at'
         ]

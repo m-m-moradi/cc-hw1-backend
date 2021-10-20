@@ -161,3 +161,8 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+IBM_T2S_API_KEY = os.getenv('IBM_T2S_API_KEY', None)
+IBM_T2S_API_URL = os.getenv('IBM_T2S_API_URL', None)
+IBM_NLP_API_KEY = os.getenv('IBM_NLP_API_KEY', None)
+IBM_NLP_API_URL = os.getenv('IBM_NLP_API_URL', None)
