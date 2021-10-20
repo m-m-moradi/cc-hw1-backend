@@ -18,6 +18,8 @@ django==3.2.8
     #   djangorestframework
 django-cors-headers==3.10.0
     # via -r requirements.in
+django-environ==0.8.1
+    # via -r requirements.in
 django-filter==21.1
     # via -r requirements.in
 djangorestframework==3.12.4

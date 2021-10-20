@@ -9,3 +9,4 @@ Faker
 requests
 django-cors-headers
 ibm-watson>=5.3.0
+django-environ

@@ -12,24 +12,33 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
+# these three methods are identical (except the return type str vs Path)
+# BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = environ.Path(__file__) - 2
+env = environ.Env(
+    # set casting, default value
+    DEBUG_VALUE=(bool, False),
+    IBM_T2S_API_KEY=(str, None),
+    IBM_T2S_API_URL=(str, None),
+    IBM_NLP_API_KEY=(str, None),
+    IBM_NLP_API_URL=(str, None),
+)
+env.read_env(env.str('ENV_PATH', '.env.pro'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG_VALUE') == 'True'
+DEBUG = env('DEBUG_VALUE')
 
 ALLOWED_HOSTS = []
 
 # Application definition
-CORS_ORIGIN_WHITELIST = [origin.strip() for origin in
-                        os.environ.get("CORS_ORIGINS", "http://localhost:7685").split(',')]
+CORS_ORIGIN_WHITELIST = [origin.strip() for origin in env.list("CORS_ORIGINS")]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https?://localhost(:.*)?$",
@@ -78,7 +87,7 @@ ROOT_URLCONF = 'cc_hw1_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [os.path.join(BASE_DIR, 'templates')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -100,12 +109,12 @@ WSGI_APPLICATION = 'cc_hw1_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_IP'),
-        'PORT': os.environ.get('DB_PORT'),
-        'CONN_MAX_AGE': os.environ.get('CONN_MAX_AGE', 60) if not DEBUG else 0
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_IP'),
+        'PORT': env('DB_PORT'),
+        'CONN_MAX_AGE': env('CONN_MAX_AGE', 60) if not DEBUG else 0
     }
 }
 
@@ -132,9 +141,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-TEMP_ROOT = MEDIA_ROOT / 'tmp'
+TEMP_ROOT = os.path.join(MEDIA_ROOT, 'tmp')
 
 if not os.path.exists(TEMP_ROOT):
     os.makedirs(TEMP_ROOT)
@@ -162,7 +171,7 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-IBM_T2S_API_KEY = os.getenv('IBM_T2S_API_KEY', None)
-IBM_T2S_API_URL = os.getenv('IBM_T2S_API_URL', None)
-IBM_NLP_API_KEY = os.getenv('IBM_NLP_API_KEY', None)
-IBM_NLP_API_URL = os.getenv('IBM_NLP_API_URL', None)
+IBM_T2S_API_KEY = env('IBM_T2S_API_KEY')
+IBM_T2S_API_URL = env('IBM_T2S_API_URL')
+IBM_NLP_API_KEY = env('IBM_NLP_API_KEY')
+IBM_NLP_API_URL = env('IBM_NLP_API_URL')
