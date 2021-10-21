@@ -34,18 +34,19 @@ if DOTENV_FILE:
     env_config = decouple.Config(decouple.RepositoryEnv(DOTENV_FILE))
 else:
     print("without .env file")
-    print(os.environ.get("SECRET_KEY"))
     env_config = decouple.Config(decouple.RepositoryEmpty())
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env_config.get('SECRET_KEY')
+SECRET_KEY = env_config.get('SECRET_KEY', default='default')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env_config.get('DEBUG_VALUE', default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 # Application definition
-CORS_ORIGIN_WHITELIST = [origin.strip() for origin in env_config.get("CORS_ORIGINS", cast=decouple.Csv())]
+cors_whitelist = env_config.get("CORS_ORIGINS", default=None, cast=decouple.Csv())
+if cors_whitelist:
+    CORS_ORIGIN_WHITELIST = [origin.strip() for origin in env_config.get("CORS_ORIGINS", cast=decouple.Csv())]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https?://localhost(:.*)?$",
@@ -116,11 +117,11 @@ WSGI_APPLICATION = 'cc_hw1_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env_config.get('DB_NAME'),
-        'USER': env_config.get('DB_USER'),
-        'PASSWORD': env_config.get('DB_PASSWORD'),
-        'HOST': env_config.get('DB_IP'),
-        'PORT': env_config.get('DB_PORT'),
+        'NAME': env_config.get('DB_NAME', default=None),
+        'USER': env_config.get('DB_USER', default=None),
+        'PASSWORD': env_config.get('DB_PASSWORD', default=None),
+        'HOST': env_config.get('DB_IP', default=None),
+        'PORT': env_config.get('DB_PORT', default=None),
         'CONN_MAX_AGE': env_config.get('CONN_MAX_AGE', 60) if not DEBUG else 0
     }
 }
@@ -148,7 +149,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -164,11 +164,11 @@ USE_TZ = True
 USE_S3 = env_config.get('USE_S3', default=True, cast=bool)
 if USE_S3:
     # aws settings
-    AWS_ACCESS_KEY_ID = env_config.get('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = env_config.get('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = env_config.get('AWS_STORAGE_BUCKET_NAME')
+    AWS_ACCESS_KEY_ID = env_config.get('AWS_ACCESS_KEY_ID', default=None, cast=str)
+    AWS_SECRET_ACCESS_KEY = env_config.get('AWS_SECRET_ACCESS_KEY', default=None, cast=str)
+    AWS_STORAGE_BUCKET_NAME = env_config.get('AWS_STORAGE_BUCKET_NAME', default=None, cast=str)
     AWS_DEFAULT_ACL = None
-    AWS_S3_ENDPOINT_URL = env_config.get('AWS_S3_ENDPOINT_URL')
+    AWS_S3_ENDPOINT_URL = env_config.get('AWS_S3_ENDPOINT_URL', default=None, cast=str)
     AWS_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
     # s3 static settings
     STATIC_LOCATION = 'static'
