@@ -164,11 +164,11 @@ USE_TZ = True
 USE_S3 = env_config.get('USE_S3', default=True, cast=bool)
 if USE_S3:
     # aws settings
-    AWS_ACCESS_KEY_ID = env_config.get('AWS_ACCESS_KEY_ID', default=None, cast=str)
-    AWS_SECRET_ACCESS_KEY = env_config.get('AWS_SECRET_ACCESS_KEY', default=None, cast=str)
-    AWS_STORAGE_BUCKET_NAME = env_config.get('AWS_STORAGE_BUCKET_NAME', default=None, cast=str)
+    AWS_ACCESS_KEY_ID = env_config.get('AWS_ACCESS_KEY_ID', default='default_key', cast=str)
+    AWS_SECRET_ACCESS_KEY = env_config.get('AWS_SECRET_ACCESS_KEY', default='default_secret', cast=str)
+    AWS_STORAGE_BUCKET_NAME = env_config.get('AWS_STORAGE_BUCKET_NAME', default='default_bucket', cast=str)
     AWS_DEFAULT_ACL = None
-    AWS_S3_ENDPOINT_URL = env_config.get('AWS_S3_ENDPOINT_URL', default=None, cast=str)
+    AWS_S3_ENDPOINT_URL = env_config.get('AWS_S3_ENDPOINT_URL', default='default_url', cast=str)
     AWS_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
     # s3 static settings
     STATIC_LOCATION = 'static'
