@@ -5,6 +5,8 @@
 __pycache__
 db.sqlite3
 media
+static
+docker-compose.yml
 
 # Backup files #
 *.bak
@@ -77,6 +79,8 @@ celerybeat-schedule.*
 *.sage.py
 
 # Environments
+.env.dev
+.env.pro
 .env
 .venv
 env/

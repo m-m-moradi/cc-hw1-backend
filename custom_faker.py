@@ -58,7 +58,7 @@ print({'api-key': deep_ai_key})
 
 story_num = 20
 picture_num = 20
-fake_story = False
+fake_story = True
 fake_picture = True
 
 if fake_story:
