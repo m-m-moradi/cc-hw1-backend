@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 import environ
 
+# for /f "delims== tokens=1,2" %%G in (param.txt) do set %%G=%%H
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # these three methods are identical (except the return type str vs Path)
 # BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,6 +23,7 @@ BASE_DIR = environ.Path(__file__) - 2
 env = environ.Env(
     # set casting, default value
     DEBUG_VALUE=(bool, False),
+    USE_S3=(bool, False),
     IBM_T2S_API_KEY=(str, None),
     IBM_T2S_API_URL=(str, None),
     IBM_NLP_API_KEY=(str, None),
@@ -141,30 +143,45 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-TEMP_ROOT = os.path.join(MEDIA_ROOT, 'tmp')
-
-if not os.path.exists(TEMP_ROOT):
-    os.makedirs(TEMP_ROOT)
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Tehran'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+USE_S3 = env('USE_S3')
+if USE_S3:
+    # aws settings
+    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+    AWS_DEFAULT_ACL = None
+    AWS_S3_ENDPOINT_URL = env('AWS_S3_ENDPOINT_URL')
+    AWS_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+    print(AWS_STORAGE_BUCKET_NAME)
+    # s3 static settings
+    STATIC_LOCATION = 'static'
+    STATIC_URL = f'/static/'
+    STATICFILES_STORAGE = 'cc_hw1_backend.storage_backends.StaticStorage'
+    # s3 public media settings
+    PUBLIC_MEDIA_LOCATION = 'media'
+    MEDIA_URL = f'/media/'
+    DEFAULT_FILE_STORAGE = 'cc_hw1_backend.storage_backends.PublicMediaStorage'
+else:
+    STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    TEMP_ROOT = os.path.join(MEDIA_ROOT, 'tmp')
+    if not os.path.exists(TEMP_ROOT):
+        os.makedirs(TEMP_ROOT)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
