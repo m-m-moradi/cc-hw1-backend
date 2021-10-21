@@ -24,8 +24,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DOTENV_FILE = os.environ.get("ENV_FILE", None)
 if DOTENV_FILE:
+    print(f"using .env file: {DOTENV_FILE}")
     env_config = decouple.Config(decouple.RepositoryEnv(DOTENV_FILE))
 else:
+    print("without .env file")
+    print(os.environ.get("SECRET_KEY"))
     env_config = decouple.Config(decouple.RepositoryEmpty())
 
 # SECURITY WARNING: keep the secret key used in production secret!
