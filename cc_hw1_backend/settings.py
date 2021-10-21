@@ -14,7 +14,13 @@ from pathlib import Path
 import os
 import decouple
 
+# activate.bat
 # for /f "delims== tokens=1,2" %%G in (param.txt) do set %%G=%%H
+# activate (bash)
+# export $(grep -v '^#' .env.dev | xargs -d '\n')
+# deactivate (bash)
+# unset $(grep - v '^#'.env.dev | sed -E 's/(.*)=.*/\1/' | xargs)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # these three methods are identical (except the return type str vs Path)
 # BASE_DIR = Path(__file__).resolve().parent.parent
