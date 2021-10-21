@@ -12,35 +12,31 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-import environ
+import decouple
 
 # for /f "delims== tokens=1,2" %%G in (param.txt) do set %%G=%%H
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # these three methods are identical (except the return type str vs Path)
 # BASE_DIR = Path(__file__).resolve().parent.parent
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_DIR = environ.Path(__file__) - 2
-env = environ.Env(
-    # set casting, default value
-    DEBUG_VALUE=(bool, False),
-    USE_S3=(bool, False),
-    IBM_T2S_API_KEY=(str, None),
-    IBM_T2S_API_URL=(str, None),
-    IBM_NLP_API_KEY=(str, None),
-    IBM_NLP_API_URL=(str, None),
-)
-env.read_env(env.str('ENV_PATH', '.env.pro'))
+# BASE_DIR = environ.Path(__file__) - 2
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DOTENV_FILE = os.environ.get("ENV_FILE", None)
+if DOTENV_FILE:
+    env_config = decouple.Config(decouple.RepositoryEnv(DOTENV_FILE))
+else:
+    env_config = decouple.Config(decouple.RepositoryEmpty())
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env_config.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG_VALUE')
+DEBUG = env_config.get('DEBUG_VALUE', default=False, cast=bool)
 
 ALLOWED_HOSTS = []
-
 # Application definition
-CORS_ORIGIN_WHITELIST = [origin.strip() for origin in env.list("CORS_ORIGINS")]
+CORS_ORIGIN_WHITELIST = [origin.strip() for origin in env_config.get("CORS_ORIGINS", cast=decouple.Csv())]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https?://localhost(:.*)?$",
@@ -111,12 +107,12 @@ WSGI_APPLICATION = 'cc_hw1_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_IP'),
-        'PORT': env('DB_PORT'),
-        'CONN_MAX_AGE': env('CONN_MAX_AGE', 60) if not DEBUG else 0
+        'NAME': env_config.get('DB_NAME'),
+        'USER': env_config.get('DB_USER'),
+        'PASSWORD': env_config.get('DB_PASSWORD'),
+        'HOST': env_config.get('DB_IP'),
+        'PORT': env_config.get('DB_PORT'),
+        'CONN_MAX_AGE': env_config.get('CONN_MAX_AGE', 60) if not DEBUG else 0
     }
 }
 
@@ -156,16 +152,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-USE_S3 = env('USE_S3')
+USE_S3 = env_config.get('USE_S3', default=True, cast=bool)
 if USE_S3:
     # aws settings
-    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+    AWS_ACCESS_KEY_ID = env_config.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = env_config.get('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = env_config.get('AWS_STORAGE_BUCKET_NAME')
     AWS_DEFAULT_ACL = None
-    AWS_S3_ENDPOINT_URL = env('AWS_S3_ENDPOINT_URL')
+    AWS_S3_ENDPOINT_URL = env_config.get('AWS_S3_ENDPOINT_URL')
     AWS_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
-    print(AWS_STORAGE_BUCKET_NAME)
     # s3 static settings
     STATIC_LOCATION = 'static'
     STATIC_URL = f'/static/'
@@ -188,7 +183,7 @@ else:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-IBM_T2S_API_KEY = env('IBM_T2S_API_KEY')
-IBM_T2S_API_URL = env('IBM_T2S_API_URL')
-IBM_NLP_API_KEY = env('IBM_NLP_API_KEY')
-IBM_NLP_API_URL = env('IBM_NLP_API_URL')
+IBM_T2S_API_KEY = env_config.get('IBM_T2S_API_KEY', default=None, cast=str)
+IBM_T2S_API_URL = env_config.get('IBM_T2S_API_URL', default=None, cast=str)
+IBM_NLP_API_KEY = env_config.get('IBM_NLP_API_KEY', default=None, cast=str)
+IBM_NLP_API_URL = env_config.get('IBM_NLP_API_URL', default=None, cast=str)
