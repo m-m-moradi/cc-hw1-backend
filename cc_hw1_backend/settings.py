@@ -44,11 +44,12 @@ ALLOWED_HOSTS = []
 # Application definition
 cors_whitelist = env_config.get("CORS_ORIGINS", default=None, cast=decouple.Csv())
 if cors_whitelist:
-    CORS_ORIGIN_WHITELIST = [origin.strip() for origin in env_config.get("CORS_ORIGINS", cast=decouple.Csv())]
+    CORS_ALLOWED_ORIGINS = [origin.strip() for origin in env_config.get("CORS_ORIGINS", cast=decouple.Csv())]
 
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https?://localhost(:.*)?$",
-]
+if DEBUG:
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r"^https?://localhost(:.*)?$",
+    ]
 
 CORS_ALLOW_HEADERS = [
     'accept',
