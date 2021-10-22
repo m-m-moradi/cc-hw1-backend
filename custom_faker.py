@@ -4,6 +4,9 @@ import datetime
 from faker import Faker
 from django.core.files import File
 
+from tempfile import TemporaryFile
+import decouple
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cc_hw1_backend.settings")
 django.setup()
 
@@ -50,16 +53,22 @@ class UTC0330(datetime.tzinfo):
         return self.__class__._name
 
 
+DOTENV_FILE = os.environ.get("ENV_FILE", None)
+if DOTENV_FILE:
+    env_config = decouple.Config(decouple.RepositoryEnv(DOTENV_FILE))
+else:
+    env_config = decouple.Config(decouple.RepositoryEmpty())
+
 faker = Faker()
 Faker.seed(0)
-deep_ai_key = os.getenv("DEEP_AI")
+deep_ai_key = env_config("DEEP_AI", default=None, cast=str)
 print(deep_ai_key)
 print({'api-key': deep_ai_key})
 
-story_num = 20
-picture_num = 20
-fake_story = True
-fake_picture = True
+story_num = env_config("STORY_NUMBER", default=20, cast=int)
+picture_num = env_config("PICTURE_NUMBER", default=20, cast=int)
+fake_story = env_config("FAKE_STORY", default=True, cast=bool)
+fake_picture = env_config("FAKE_PICTURE", default=True, cast=bool)
 
 if fake_story:
     for i in range(story_num):
@@ -95,23 +104,21 @@ if fake_picture:
     for i in range(picture_num):
         response = requests.get("https://picsum.photos/400/300")
         file_name = response.headers['Content-Disposition'].split(';')[1].strip().split("\"")[1]
-        local_file = f'media/tmp/{file_name}'
-        file = open(local_file, 'wb')
-        file.write(response.content)
-        file.close()
-        picture = models.Picture(
-            published_status=models.ACCEPTED,
-            uploader=faker.name(),
-            title=f'{rand_word()} is such a amazing {rand_word()}.',
-        )
-        picture.image.save(file_name, File(open(local_file, 'rb')))
-        for j in range(0, randint(1, 10)):
-            comment = models.Comment(
+        with TemporaryFile('wb+') as picture_file:
+            picture_file.write(response.content)
+            picture = models.Picture(
                 published_status=models.ACCEPTED,
-                author=faker.name(),
-                text=faker.paragraph(nb_sentences=7),
-                content_object=picture,
+                uploader=faker.name(),
+                title=f'{rand_word()} is such a amazing {rand_word()}.',
             )
-            comment.save()
-            print(f'comment #{j} done.')
-        print(f'picture #{i} done.')
+            picture.image.save(file_name, File(picture_file))
+            for j in range(0, randint(1, 10)):
+                comment = models.Comment(
+                    published_status=models.ACCEPTED,
+                    author=faker.name(),
+                    text=faker.paragraph(nb_sentences=7),
+                    content_object=picture,
+                )
+                comment.save()
+                print(f'comment #{j} done.')
+            print(f'picture #{i} done.')
