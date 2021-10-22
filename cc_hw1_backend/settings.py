@@ -171,22 +171,24 @@ if USE_S3:
     AWS_S3_ENDPOINT_URL = env_config.get('AWS_S3_ENDPOINT_URL', default='https://somewhere.com/', cast=str)
     AWS_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
     # s3 static settings
-    STATIC_LOCATION = 'static'
-    STATIC_URL = f'/static/'
-    STATICFILES_STORAGE = 'cc_hw1_backend.storage_backends.StaticStorage'
+    # STATIC_LOCATION = 'static'
+    # STATIC_URL = f'/static/'
+    # STATICFILES_STORAGE = 'cc_hw1_backend.storage_backends.StaticStorage'
     # s3 public media settings
     PUBLIC_MEDIA_LOCATION = 'media'
     MEDIA_URL = f'/media/'
     DEFAULT_FILE_STORAGE = 'cc_hw1_backend.storage_backends.PublicMediaStorage'
 else:
-    STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    # STATIC_URL = '/static/'
+    # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
     TEMP_ROOT = os.path.join(MEDIA_ROOT, 'tmp')
     if not os.path.exists(TEMP_ROOT):
         os.makedirs(TEMP_ROOT)
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
